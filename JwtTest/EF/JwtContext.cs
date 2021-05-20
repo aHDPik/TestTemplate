@@ -11,6 +11,7 @@ namespace JwtTest.EF
     public class JwtContext:DbContext
     {
         public DbSet<Person> People { get; set; }
+        public DbSet<Address> Address { get; set; }
 
         public JwtContext(DbContextOptions<JwtContext> options)
             : base(options)

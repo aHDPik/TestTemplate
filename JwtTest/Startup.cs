@@ -35,7 +35,7 @@ namespace JwtTest
             services.Configure<AuthOptions>(section);
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<JwtContext>(options =>
-                options.UseSqlServer(connection));
+                options.UseLazyLoadingProxies().UseSqlServer(connection));
             services.AddAuthentication("smart")
                     .AddPolicyScheme("smart", "Authorization Bearer or Cookie", options =>
                     {

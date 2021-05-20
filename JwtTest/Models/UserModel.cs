@@ -23,5 +23,7 @@ namespace JwtTest.Models
         [DisplayName("Загрузите Аватар")]
         [DataType(DataType.Upload)]
         public IFormFile Avatar { get; set; }
+        
+        public List<AddressModel> Addres { get; set; }
     }
 }

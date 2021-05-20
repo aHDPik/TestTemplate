@@ -262,7 +262,30 @@ namespace JwtTest.Controllers
         [Authorize]
         public IActionResult Userpage()
         {
-            return View(CurrentUser.ToUserModel());
+            UserModel usr = CurrentUser.ToUserModel();
+            usr.Addres = new List<AddressModel>();
+            IQueryable<Address> allAdresses = context.Address.Where(a=>a.Owner.Id == usr.Id);
+            foreach(Address adress in allAdresses){
+                usr.Addres.Add(new AddressModel(){
+                    Id = adress.Id,
+                    Addr = adress.Addr,
+                    Description = adress.Description,
+                    Cost = adress.Cost,
+                    Rooms = adress.Rooms
+                });
+            }            
+            return View(usr);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> DeleteAddress(int IdAddr)
+        {
+            Address AddrDelete = context.Address.Find(IdAddr);
+            if (AddrDelete.Owner.Id == CurrentUser.Id){
+                context.Address.Remove(AddrDelete);
+                await context.SaveChangesAsync();   
+            }        
+            return Redirect("/Account/UserPage");
         }
 
         private string GetContentType(string filename)
@@ -285,6 +308,29 @@ namespace JwtTest.Controllers
             string contentType = GetContentType(filePath);
             byte[] imgBytes = await System.IO.File.ReadAllBytesAsync(filePath);
             return File(imgBytes, contentType);
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult RegisterAddress()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterAddress(AddressModel model)
+        {
+
+            Address address = new Address
+            {
+                Addr = model.Addr,
+                Description = model.Description,
+                Owner = CurrentUser,
+                Cost = model.Cost,
+                Rooms = model.Rooms
+            };
+            await context.Address.AddAsync(address);
+            await context.SaveChangesAsync();
+            return Redirect("/Account/UserPage");
         }
 
     }
