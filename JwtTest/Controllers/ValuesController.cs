@@ -24,5 +24,12 @@ namespace JwtTest.Controllers
         {
             return Ok("Ваша роль: администратор");
         }
+
+        [Authorize]
+        [Route("gettime")]
+        public string GetTime()
+        {
+            return DateTime.Now.ToString();
+        }
     }
 }
